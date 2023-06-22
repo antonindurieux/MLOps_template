@@ -78,9 +78,7 @@ def train_model(
 
         # Log artifacts
         with tempfile.TemporaryDirectory() as dp:
-            utils.save_dict(
-                vars(artifacts["args"]), Path(dp, "args.json"), cls=NumpyEncoder
-            )
+            utils.save_dict(vars(artifacts["args"]), Path(dp, "args.json"), cls=NumpyEncoder)
             artifacts["label_encoder"].save(Path(dp, "label_encoder.json"))
             joblib.dump(artifacts["vectorizer"], Path(dp, "vectorizer.pkl"))
             joblib.dump(artifacts["model"], Path(dp, "model.pkl"))
@@ -113,12 +111,8 @@ def optimize(
     # Optimize
     args = Namespace(**utils.load_dict(filepath=args_fp))
     pruner = optuna.pruners.MedianPruner(n_startup_trials=5, n_warmup_steps=5)
-    study = optuna.create_study(
-        study_name="optimization", direction="maximize", pruner=pruner
-    )
-    mlflow_callback = MLflowCallback(
-        tracking_uri=mlflow.get_tracking_uri(), metric_name="f1"
-    )
+    study = optuna.create_study(study_name="optimization", direction="maximize", pruner=pruner)
+    mlflow_callback = MLflowCallback(tracking_uri=mlflow.get_tracking_uri(), metric_name="f1")
     study.optimize(
         lambda trial: train.objective(args, df, trial),
         n_trials=num_trials,
@@ -128,13 +122,9 @@ def optimize(
     # Best trial
     trials_df = study.trials_dataframe()
     trials_df = trials_df.sort_values(["user_attrs_f1"], ascending=False)
-    utils.save_dict(
-        {**args.__dict__, **study.best_trial.params}, args_fp, cls=NumpyEncoder
-    )
+    utils.save_dict({**args.__dict__, **study.best_trial.params}, args_fp, cls=NumpyEncoder)
     logger.info(f"\nBest value (f1): {study.best_trial.value}")
-    logger.info(
-        f"Best hyperparameters: {json.dumps(study.best_trial.params, indent=2)}"
-    )
+    logger.info(f"Best hyperparameters: {json.dumps(study.best_trial.params, indent=2)}")
 
 
 @app.command()

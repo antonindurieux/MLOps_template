@@ -1,5 +1,6 @@
-from __future__ import \
-    annotations  # For self type hint, from Python 3.11 just do `from typing import Self``
+from __future__ import (  # For self type hint, from Python 3.11 just do `from typing import Self``
+    annotations,
+)
 
 import json
 import re
@@ -128,7 +129,7 @@ def preprocess(df: pd.DataFrame, lower: bool, stem: bool, min_freq: int) -> pd.D
     return df
 
 
-class LabelEncoder(object):
+class LabelEncoder:
     """
     Encode labels into unique indices.
 
@@ -226,7 +227,7 @@ class LabelEncoder(object):
         Returns:
             LabelEncoder: LabelEncoder instance.
         """
-        with open(fp, "r") as fp:
+        with open(fp) as fp:
             kwargs = json.load(fp=fp)
         return cls(**kwargs)
 
