@@ -111,7 +111,7 @@ def optimize(
     # Optimize
     args = Namespace(**utils.load_dict(filepath=args_fp))
     pruner = optuna.pruners.MedianPruner(n_startup_trials=5, n_warmup_steps=5)
-    study = optuna.create_study(study_name="optimization", direction="maximize", pruner=pruner)
+    study = optuna.create_study(study_name=study_name, direction="maximize", pruner=pruner)
     mlflow_callback = MLflowCallback(tracking_uri=mlflow.get_tracking_uri(), metric_name="f1")
     study.optimize(
         lambda trial: train.objective(args, df, trial),
@@ -157,6 +157,9 @@ def load_artifacts(run_id: str = None) -> dict:
     Returns:
         dict: Run's artifacts.
     """
+    if not run_id:
+        run_id = open(Path(config.CONFIG_DIR, "run_id.txt")).read()
+
     # Locate specifics artifacts directory
     experiment_id = mlflow.get_run(run_id=run_id).info.experiment_id
     artifacts_dir = Path(config.MODEL_REGISTRY, experiment_id, run_id, "artifacts")

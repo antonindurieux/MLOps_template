@@ -11,3 +11,6 @@ __pycache__/
 # Misc
 .DS_Store
 TODO
+config/gcloud_service_account.py
+airflow/airflow-webserver.pid
+airflow/airflow.db
